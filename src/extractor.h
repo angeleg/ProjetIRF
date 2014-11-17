@@ -1,7 +1,10 @@
 #ifndef __irf_project__extractor__
 #define __irf_project__extractor__
 
-#include <stdio.h>
+
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <fstream>
 
 class Extractor{
 private:
