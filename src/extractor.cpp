@@ -8,15 +8,16 @@ static int COLS_NB = 5;
 
 /**
  * \brief   Try to find the pictograms positions
+ * \param   filename    The name of the file containing the usersheet
  * \return  A vector of points, representing the top-left corners of the squares found
  */
-vector<Point> Extractor::findSquares() {
+vector<Point> Extractor::findSquares(string filename) {
     
     // The result containing the matrix of points representing the top left corners of found squares
     vector<Point> res;
     
     // Load the sheet
-    Mat input_sheet = imread(INPUT_DIR + "s01_0001.png");
+    Mat input_sheet = imread(INPUT_DIR + filename);
     if (input_sheet.empty()){
         cout << "Unable to find image" << endl;
         return res;
@@ -25,6 +26,8 @@ vector<Point> Extractor::findSquares() {
     // Isolating pictogram area
     Rect pictograms_region = Rect(613, 763, 1595, 2350);
     Mat pictograms_mat = input_sheet(pictograms_region);
+    
+    this->isolatedPictoArea = pictograms_mat;
     
     // Convert to grayscale
     Mat gray;
@@ -53,26 +56,18 @@ vector<Point> Extractor::findSquares() {
         
         // Export rectangles
         if(approx.size() == 4) {
-            //cout << "x1: " <<approx[0].x << ", y1; " << approx[0].y << ", x2: " << approx[2].x << ", y2: " << approx[2].y << endl;
-            
-            /*Rect region_of_interest = Rect(approx[0].x, approx[0].y, 250, 250);
-             Mat img_roi = pictograms_mat(region_of_interest);
-             string output = OUTPUT_DIR + "img" + to_string(i) + ".png";
-             imwrite(output, img_roi);*/
-            
             res.insert(res.begin(), approx[0]);
-            
             cpt++;
         }
         
     }
-    cout << "Found " << cpt << " rectangles" << endl;
+    cout << "Found " << cpt << " squares" << endl;
     return res;
 }
 
 /**
  * \brief   Computes a "virtual grid" that encapsulates the average coordinates of each row and each column
- * \param   found_squares   The top-left corner point of the squares found by the findSquares() method
+ * \param   found_squares   The top-left corner point of the squares found by the findSquares method
  * \param   precision       The threshold determining if a coordinate is from a same row/column
  * \return  A vector containg two vectors, one containing rows position (first one) and the other containing column ones (second one)
  */
@@ -129,4 +124,42 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
     }
     
     return res;
+}
+
+/**
+ * \brief   Extracts the pictograms of a given usersheet
+ * \param   filename    The name of the file containing the usersheet
+ */
+void Extractor::extractFromFile(string filename) {
+    // Retrieve scripter and page number
+    regex fileRegex("s([0-9]+)_([0-9]+).png");
+    match_results<string::const_iterator> result;
+    
+    if(!regex_match(filename, result, fileRegex))
+        cout << "Invalid filename" << endl;
+    
+    string scripter = result[1];
+    string page = result[2];
+    
+    // Retrieve each pictogram coordinate
+    vector<cv::Point> squarePoints = this->findSquares(filename);
+    vector<vector<int>> grid = this->generateGrid(squarePoints, 10);
+    
+    // Extract pictograms
+    Rect region_of_interest;
+    int cpt = 0;
+    
+    for(int i=0; i < grid[0].size(); i++) {
+        for(int j=0; j < grid[1].size(); j++) {
+            region_of_interest = Rect(grid[1][j], grid[0][i], 250, 250);
+            
+            Mat img_roi = this->isolatedPictoArea(region_of_interest);
+            string output = OUTPUT_DIR + "iconID" + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j) + ".png";
+            imwrite(output, img_roi);
+            
+            cpt++;
+        }
+    }
+    
+    cout << "Extracted " << cpt << " pictograms" << endl;
 }
