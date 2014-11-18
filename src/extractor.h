@@ -6,11 +6,15 @@
 #include <iostream>
 #include <fstream>
 
+using namespace std;
+using namespace cv;
+
 class Extractor{
 private:
     
 public:
-    void extract();
+    vector<Point>  findSquares();
+    vector<vector<int>> generateGrid(vector<Point> found_squares, int precision);
 };
 
 #endif
