@@ -131,6 +131,8 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
  * \param   filename    The name of the file containing the usersheet
  */
 void Extractor::extractFromFile(string filename) {
+    string labelName = "label"; // TODO : change this when able to identify pictogram
+    
     // Retrieve scripter and page number
     regex fileRegex("s([0-9]+)_([0-9]+).png");
     match_results<string::const_iterator> result;
@@ -146,16 +148,32 @@ void Extractor::extractFromFile(string filename) {
     vector<vector<int>> grid = this->generateGrid(squarePoints, 10);
     
     // Extract pictograms
-    Rect region_of_interest;
     int cpt = 0;
     
     for(int i=0; i < grid[0].size(); i++) {
         for(int j=0; j < grid[1].size(); j++) {
-            region_of_interest = Rect(grid[1][j], grid[0][i], 250, 250);
             
+            string outputName = OUTPUT_DIR + labelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
+            
+            // Get pictogram region
+            Rect region_of_interest = Rect(grid[1][j], grid[0][i], 250, 250);
             Mat img_roi = this->isolatedPictoArea(region_of_interest);
-            string output = OUTPUT_DIR + "iconID" + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j) + ".png";
+
+            // Write pictogram image to disk
+            string output = outputName  + ".png";
             imwrite(output, img_roi);
+            
+            // Write description file to disk
+            ofstream descriptionFile;
+            descriptionFile.open(outputName + ".txt");
+            descriptionFile << "# Team members: Berthier, Géraud, Le Goff\n";
+            descriptionFile << "label " << labelName << "\n";
+            descriptionFile << "form " << scripter << page << "\n";
+            descriptionFile << "scripter " << scripter << "\n";
+            descriptionFile << "page " << page << "\n";
+            descriptionFile << "row " << i << "\n";
+            descriptionFile << "column " << j << "\n";
+            descriptionFile.close();
             
             cpt++;
         }
