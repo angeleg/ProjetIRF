@@ -49,6 +49,9 @@ vector<Point> Extractor::findSquares(string filename) {
     
     this->printed_picto_area = printed_pictograms_mat;
     
+    imshow("", pictograms_mat);
+    waitKey();
+    
     // Convert to grayscale
     Mat gray;
     cvtColor(pictograms_mat, gray, CV_BGR2GRAY);
@@ -167,20 +170,21 @@ void Extractor::extractFromFile(string filename) {
     }
     else{
         string labelName;
+        regex fileRegex("([0-9][0-9][0-9])([0-9][0-9]).png");
+        regex templateFileRegex("([a-zA-Z]+).png");
+        
+        match_results<string::const_iterator> resultFile;
+        match_results<string::const_iterator> resultTemplateFile;
         
         // Retrieve scripter and page number
-        regex fileRegex("([0-9][0-9][0-9])([0-9][0-9]).png");
-        match_results<string::const_iterator> result;
-        
-        if(!regex_match(filename, result, fileRegex))
+        if(!regex_match(filename, resultFile, fileRegex))
             cout << "Invalid filename" << endl;
         
-        string scripter = result[1];
-        string page = result[2];
+        string scripter = resultFile[1];
+        string page = resultFile[2];
         
         // Retrieve each pictogram coordinate
         vector<vector<int>> grid = this->generateGrid(squarePoints, 10);
-        
         
         // Extract pictograms
         int cpt = 0;
@@ -192,13 +196,18 @@ void Extractor::extractFromFile(string filename) {
             Rect printed_roi = Rect(0, grid[0][i], PICTOGRAM_SIDE, PICTOGRAM_SIDE);
             Mat current_picto_mat = this->printed_picto_area(printed_roi);
             
-            
             labelName = identifier.identifyPrintedPicto(current_picto_mat);
+            
+            // Retrieve scripter and page number
+            if(!regex_match(labelName, resultTemplateFile, templateFileRegex))
+                cout << "Invalid template name" << endl;
+            
+            string parsedLabelName = resultTemplateFile[1];
             
             // For each column
             for(int j=0; j < grid[1].size(); j++) {
                 
-                string outputName = this->output_folder + labelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
+                string outputName = this->output_folder + parsedLabelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
                 
                 // Get pictogram region
                 Rect region_of_interest = Rect(grid[1][j] + 10, grid[0][i] + 10, PICTOGRAM_SIDE - 20, PICTOGRAM_SIDE - 20);
@@ -212,7 +221,7 @@ void Extractor::extractFromFile(string filename) {
                 ofstream descriptionFile;
                 descriptionFile.open(outputName + ".txt");
                 descriptionFile << "# Team members: Berthier, Géraud, Le Goff\n";
-                descriptionFile << "label " << labelName << "\n";
+                descriptionFile << "label " << parsedLabelName << "\n";
                 descriptionFile << "form " << scripter << page << "\n";
                 descriptionFile << "scripter " << scripter << "\n";
                 descriptionFile << "page " << page << "\n";
@@ -224,7 +233,29 @@ void Extractor::extractFromFile(string filename) {
             }
         }
         
-        //cout << "Extracted " << cpt << " pictograms" << endl;
         this->success_cpt++;
     }
+}
+
+void Extractor::extractFromInputFolder(){
+    DIR* rep = NULL;
+    struct dirent* fichierLu = NULL;
+    rep = opendir(this->input_folder.c_str());
+    
+    if (rep == NULL)
+        cout << "Unable to open template directory" << endl;
+    
+    int cpt =0;
+
+    while ((fichierLu = readdir(rep)) != NULL){
+        if(cpt > 1){
+            cout << "Handling file : " << fichierLu->d_name << endl;
+            this->extractFromFile(fichierLu->d_name);
+        }
+        cpt++;
+    }
+    
+    if (closedir(rep) == -1)
+        cout << "There was a problem closing the template directory" << endl;
+    cout << "Sheet correctly extracted : " << this->success_cpt << "" << endl;
 }

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <regex>
 #include <fstream>
+#include <dirent.h>
 #include "pictogram_identifier.h"
 
 using namespace std;
@@ -26,6 +27,7 @@ public:
     vector<Point>  findSquares(string filename);
     vector<vector<int>> generateGrid(vector<Point> found_squares, int precision);
     void extractFromFile(string filename);
+    void extractFromInputFolder();
 };
 
 #endif
