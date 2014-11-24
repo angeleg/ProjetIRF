@@ -3,6 +3,8 @@
 static int ROWS_NB = 7;
 static int COLS_NB = 5;
 
+static int PICTOGRAM_SIDE = 260;
+
 /**
  * \brief   Extractor constructor
  * \param   input_f The input folder where we retrieve the usersheets
@@ -11,6 +13,7 @@ static int COLS_NB = 5;
 Extractor::Extractor(string input_f, string output_f){
     this->input_folder = input_f;
     this->output_folder = output_f;
+    this->number_of_squares_found = 0;
 }
 
 /**
@@ -19,6 +22,8 @@ Extractor::Extractor(string input_f, string output_f){
  * \return  A vector of points, representing the top-left corners of the squares found
  */
 vector<Point> Extractor::findSquares(string filename) {
+    
+    this->current_file = filename;
     
     // The result containing the matrix of points representing the top left corners of found squares
     vector<Point> res;
@@ -31,8 +36,11 @@ vector<Point> Extractor::findSquares(string filename) {
     }
     
     // Isolating pictogram area
-    Rect pictograms_region = Rect(613, 763, 1595, 2350);
+    Rect pictograms_region = Rect(500, 700, 1900, 2500);
     Mat pictograms_mat = input_sheet(pictograms_region);
+    
+    //imshow("", pictograms_mat);
+    //waitKey(0);
     
     this->isolatedPictoArea = pictograms_mat;
     
@@ -69,6 +77,7 @@ vector<Point> Extractor::findSquares(string filename) {
         
     }
     cout << "Found " << cpt << " squares" << endl;
+    this -> number_of_squares_found = cpt;
     return res;
 }
 
@@ -81,6 +90,7 @@ vector<Point> Extractor::findSquares(string filename) {
  */
 vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int precision){
     vector<vector<int>> res;
+    
     
     res.push_back(*new vector<int>()); // position verticale des lignes
     res.push_back(*new vector<int>()); // position horizontale des colonnes
@@ -132,6 +142,7 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
     }
     
     return res;
+    
 }
 
 
@@ -140,53 +151,62 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
  * \param   filename    The name of the file containing the usersheet
  */
 void Extractor::extractFromFile(string filename) {
-    string labelName = "label"; // TODO : change this when able to identify pictogram
-    
-    // Retrieve scripter and page number
-    regex fileRegex("s([0-9]+)_([0-9]+).png");
-    match_results<string::const_iterator> result;
-    
-    if(!regex_match(filename, result, fileRegex))
-        cout << "Invalid filename" << endl;
-    
-    string scripter = result[1];
-    string page = result[2];
-    
-    // Retrieve each pictogram coordinate
+    // Find squares
     vector<cv::Point> squarePoints = this->findSquares(filename);
-    vector<vector<int>> grid = this->generateGrid(squarePoints, 10);
     
-    // Extract pictograms
-    int cpt = 0;
-    
-    for(int i=0; i < grid[0].size(); i++) {
-        for(int j=0; j < grid[1].size(); j++) {
-            
-            string outputName = this->output_folder + labelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
-            
-            // Get pictogram region
-            Rect region_of_interest = Rect(grid[1][j], grid[0][i], 250, 250);
-            Mat img_roi = this->isolatedPictoArea(region_of_interest);
-
-            // Write pictogram image to disk
-            string output = outputName  + ".png";
-            imwrite(output, img_roi);
-            
-            // Write description file to disk
-            ofstream descriptionFile;
-            descriptionFile.open(outputName + ".txt");
-            descriptionFile << "# Team members: Berthier, Géraud, Le Goff\n";
-            descriptionFile << "label " << labelName << "\n";
-            descriptionFile << "form " << scripter << page << "\n";
-            descriptionFile << "scripter " << scripter << "\n";
-            descriptionFile << "page " << page << "\n";
-            descriptionFile << "row " << i << "\n";
-            descriptionFile << "column " << j << "\n";
-            descriptionFile.close();
-            
-            cpt++;
-        }
+    // Test if enough squares have been detected
+    if(this->number_of_squares_found < 28){
+        cout << "Unable to process file " << this->current_file << ", because only " << " squares have been detected." << endl;
+        return;
     }
-    
-    cout << "Extracted " << cpt << " pictograms" << endl;
+    else{
+        string labelName = "label"; // TODO : change this when able to identify pictogram
+        
+        // Retrieve scripter and page number
+        regex fileRegex("([0-9][0-9][0-9])([0-9][0-9]).png");
+        match_results<string::const_iterator> result;
+        
+        if(!regex_match(filename, result, fileRegex))
+            cout << "Invalid filename" << endl;
+        
+        string scripter = result[1];
+        string page = result[2];
+        
+        // Retrieve each pictogram coordinate
+        vector<vector<int>> grid = this->generateGrid(squarePoints, 10);
+        
+        // Extract pictograms
+        int cpt = 0;
+        
+        for(int i=0; i < grid[0].size(); i++) {
+            for(int j=0; j < grid[1].size(); j++) {
+                
+                string outputName = this->output_folder + labelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
+                
+                // Get pictogram region
+                Rect region_of_interest = Rect(grid[1][j], grid[0][i], PICTOGRAM_SIDE, PICTOGRAM_SIDE);
+                Mat img_roi = this->isolatedPictoArea(region_of_interest);
+                
+                // Write pictogram image to disk
+                string output = outputName  + ".png";
+                imwrite(output, img_roi);
+                
+                // Write description file to disk
+                ofstream descriptionFile;
+                descriptionFile.open(outputName + ".txt");
+                descriptionFile << "# Team members: Berthier, Géraud, Le Goff\n";
+                descriptionFile << "label " << labelName << "\n";
+                descriptionFile << "form " << scripter << page << "\n";
+                descriptionFile << "scripter " << scripter << "\n";
+                descriptionFile << "page " << page << "\n";
+                descriptionFile << "row " << i << "\n";
+                descriptionFile << "column " << j << "\n";
+                descriptionFile.close();
+                
+                cpt++;
+            }
+        }
+        
+        cout << "Extracted " << cpt << " pictograms" << endl;
+    }
 }

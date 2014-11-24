@@ -14,6 +14,8 @@ private:
     Mat isolatedPictoArea;
     string input_folder;
     string output_folder;
+    string current_file;
+    int number_of_squares_found;
     
 public:
     Extractor(string input_f, string output_f);
