@@ -6,17 +6,16 @@ using namespace std;
 
 string input_f = "/Users/baptiste/Documents/INSA/irf/test_input/";
 string output_f = "/Users/baptiste/Documents/INSA/irf/output/";
+string root_f = "/Users/baptiste/Documents/INSA/irf/";
 
 int main (int argc, const char * argv[]) {
     
-    Extractor e = *new Extractor(input_f, output_f);
-    e.extractFromFile("00022.png");
-    
-    /*Mat tmpl_picto = imread("/Users/baptiste/Documents/INSA/irf/template_pictograms/police.png");
-    Mat sheet = imread("/Users/baptiste/Documents/INSA/irf/test_db/s01_0002.png");
+    Extractor extractor = *new Extractor(input_f, output_f, root_f + "template_pictograms/");
+    extractor.extractFromFile("00004.png");
+    /*
+    Mat sheet = imread(output_f + "aaaa6.png");
 
-    
-    PictogramIdentifier pe = *new PictogramIdentifier();
-    pe.identifyPrintedPicto(sheet, tmpl_picto);*/
+    PictogramIdentifier pe = *new PictogramIdentifier(root_f + "template_pictograms/");
+    pe.identifyPrintedPicto(sheet);*/
     
 }

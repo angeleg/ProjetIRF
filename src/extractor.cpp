@@ -10,10 +10,12 @@ static int PICTOGRAM_SIDE = 260;
  * \param   input_f The input folder where we retrieve the usersheets
  * \param   output_f The output folder where we put the pictograms exctracted
  */
-Extractor::Extractor(string input_f, string output_f){
+Extractor::Extractor(string input_f, string output_f, string template_f){
     this->input_folder = input_f;
     this->output_folder = output_f;
+    this->template_folder = template_f;
     this->number_of_squares_found = 0;
+    this->success_cpt = 0;
 }
 
 /**
@@ -35,14 +37,17 @@ vector<Point> Extractor::findSquares(string filename) {
         return res;
     }
     
-    // Isolating pictogram area
+    // Isolating drawed pictogram area
     Rect pictograms_region = Rect(500, 700, 1900, 2500);
     Mat pictograms_mat = input_sheet(pictograms_region);
     
-    //imshow("", pictograms_mat);
-    //waitKey(0);
+    this->drawn_picto_area = pictograms_mat;
     
-    this->isolatedPictoArea = pictograms_mat;
+    // Isolating printed pictogram area
+    Rect printed_pictograms_region = Rect(200, 700, PICTOGRAM_SIDE, 2500);
+    Mat printed_pictograms_mat = input_sheet(printed_pictograms_region);
+    
+    this->printed_picto_area = printed_pictograms_mat;
     
     // Convert to grayscale
     Mat gray;
@@ -142,7 +147,6 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
     }
     
     return res;
-    
 }
 
 
@@ -151,6 +155,8 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
  * \param   filename    The name of the file containing the usersheet
  */
 void Extractor::extractFromFile(string filename) {
+    PictogramIdentifier identifier = *new PictogramIdentifier(this->template_folder);
+    
     // Find squares
     vector<cv::Point> squarePoints = this->findSquares(filename);
     
@@ -160,7 +166,7 @@ void Extractor::extractFromFile(string filename) {
         return;
     }
     else{
-        string labelName = "label"; // TODO : change this when able to identify pictogram
+        string labelName;
         
         // Retrieve scripter and page number
         regex fileRegex("([0-9][0-9][0-9])([0-9][0-9]).png");
@@ -175,17 +181,28 @@ void Extractor::extractFromFile(string filename) {
         // Retrieve each pictogram coordinate
         vector<vector<int>> grid = this->generateGrid(squarePoints, 10);
         
+        
         // Extract pictograms
         int cpt = 0;
         
+        // For each row
         for(int i=0; i < grid[0].size(); i++) {
+            
+            // Identify line printed pictogram
+            Rect printed_roi = Rect(0, grid[0][i], PICTOGRAM_SIDE, PICTOGRAM_SIDE);
+            Mat current_picto_mat = this->printed_picto_area(printed_roi);
+            
+            
+            labelName = identifier.identifyPrintedPicto(current_picto_mat);
+            
+            // For each column
             for(int j=0; j < grid[1].size(); j++) {
                 
                 string outputName = this->output_folder + labelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
                 
                 // Get pictogram region
-                Rect region_of_interest = Rect(grid[1][j], grid[0][i], PICTOGRAM_SIDE, PICTOGRAM_SIDE);
-                Mat img_roi = this->isolatedPictoArea(region_of_interest);
+                Rect region_of_interest = Rect(grid[1][j] + 10, grid[0][i] + 10, PICTOGRAM_SIDE - 20, PICTOGRAM_SIDE - 20);
+                Mat img_roi = this->drawn_picto_area(region_of_interest);
                 
                 // Write pictogram image to disk
                 string output = outputName  + ".png";
@@ -207,6 +224,7 @@ void Extractor::extractFromFile(string filename) {
             }
         }
         
-        cout << "Extracted " << cpt << " pictograms" << endl;
+        //cout << "Extracted " << cpt << " pictograms" << endl;
+        this->success_cpt++;
     }
 }
