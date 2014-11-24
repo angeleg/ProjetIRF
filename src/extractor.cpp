@@ -1,10 +1,17 @@
 #include "extractor.h"
 
-static string INPUT_DIR = "/Users/baptiste/Documents/INSA/irf/test_db/";
-static string OUTPUT_DIR = "/Users/baptiste/Documents/INSA/irf/output/";
-
 static int ROWS_NB = 7;
 static int COLS_NB = 5;
+
+/**
+ * \brief   Extractor constructor
+ * \param   input_f The input folder where we retrieve the usersheets
+ * \param   output_f The output folder where we put the pictograms exctracted
+ */
+Extractor::Extractor(string input_f, string output_f){
+    this->input_folder = input_f;
+    this->output_folder = output_f;
+}
 
 /**
  * \brief   Try to find the pictograms positions
@@ -17,7 +24,7 @@ vector<Point> Extractor::findSquares(string filename) {
     vector<Point> res;
     
     // Load the sheet
-    Mat input_sheet = imread(INPUT_DIR + filename);
+    Mat input_sheet = imread(this->input_folder + filename);
     if (input_sheet.empty()){
         cout << "Unable to find image" << endl;
         return res;
@@ -64,6 +71,7 @@ vector<Point> Extractor::findSquares(string filename) {
     cout << "Found " << cpt << " squares" << endl;
     return res;
 }
+
 
 /**
  * \brief   Computes a "virtual grid" that encapsulates the average coordinates of each row and each column
@@ -126,6 +134,7 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
     return res;
 }
 
+
 /**
  * \brief   Extracts the pictograms of a given usersheet
  * \param   filename    The name of the file containing the usersheet
@@ -153,7 +162,7 @@ void Extractor::extractFromFile(string filename) {
     for(int i=0; i < grid[0].size(); i++) {
         for(int j=0; j < grid[1].size(); j++) {
             
-            string outputName = OUTPUT_DIR + labelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
+            string outputName = this->output_folder + labelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
             
             // Get pictogram region
             Rect region_of_interest = Rect(grid[1][j], grid[0][i], 250, 250);
