@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <regex>
 #include <dirent.h>
 
@@ -14,7 +15,10 @@ namespace utils {
     
     DIR* openDir(string path);
     void closeDir(DIR* dir);
+    
     vector<string> getFilenamesFromFolder(string path);
+    
+    void writeDescriptionFile(string output_name, string label, string scripter, string page , int i, int j);
 }
 
 #endif

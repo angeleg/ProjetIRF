@@ -37,13 +37,13 @@ vector<Point> Extractor::findSquares(string filename) {
         return res;
     }
     
-    // Isolating drawed pictogram area
+    // Isolate drawed pictogram area
     Rect pictograms_region = Rect(500, 700, 1900, 2500);
     Mat pictograms_mat = input_sheet(pictograms_region);
     
     this->drawn_picto_area = pictograms_mat;
     
-    // Isolating printed pictogram area
+    // Isolate printed pictogram area
     Rect printed_pictograms_region = Rect(200, 700, PICTOGRAM_SIDE, 2500);
     Mat printed_pictograms_mat = input_sheet(printed_pictograms_region);
     
@@ -56,7 +56,6 @@ vector<Point> Extractor::findSquares(string filename) {
     // Convert to binary image using Canny
     Mat bw;
     Canny(gray, bw, 0, 50, 5);
-    
     
     // Find contours
     vector<vector<Point> > contours;
@@ -81,7 +80,7 @@ vector<Point> Extractor::findSquares(string filename) {
         }
         
     }
-    cout << "Found " << cpt << " squares" << endl;
+    
     this -> number_of_squares_found = cpt;
     return res;
 }
@@ -91,11 +90,10 @@ vector<Point> Extractor::findSquares(string filename) {
  * \brief   Computes a "virtual grid" that encapsulates the average coordinates of each row and each column
  * \param   found_squares   The top-left corner point of the squares found by the findSquares method
  * \param   precision       The threshold determining if a coordinate is from a same row/column
- * \return  A vector containg two vectors, one containing rows position (first one) and the other containing column ones (second one)
+ * \return  vector  A vector containg two vectors, one containing rows position (first one) and the other containing column ones (second one)
  */
 vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int precision){
     vector<vector<int>> res;
-    
     
     res.push_back(*new vector<int>()); // position verticale des lignes
     res.push_back(*new vector<int>()); // position horizontale des colonnes
@@ -153,8 +151,9 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
 /**
  * \brief   Extracts the pictograms of a given usersheet
  * \param   filename    The name of the file containing the usersheet
+ * \return  bool    True if extraction was successful
  */
-void Extractor::extractFromFile(string filename) {
+bool Extractor::extractFromFile(string filename) {
     PictogramIdentifier identifier = *new PictogramIdentifier(this->template_folder);
     
     // Find squares
@@ -162,94 +161,95 @@ void Extractor::extractFromFile(string filename) {
     
     // Test if enough squares have been detected
     if(this->number_of_squares_found < 28){
-        cout << "Unable to process file " << this->current_file << ", because only " << " squares have been detected." << endl;
-        return;
+        cout << "Unable to process file " << this->current_file << ", because only " << this->number_of_squares_found << " squares have been detected." << endl;
+        return false;
     }
-    else{
-        string labelName;
-        regex fileRegex("([0-9][0-9][0-9])([0-9][0-9]).png");
-        regex templateFileRegex("([a-zA-Z]+).png");
+    
+    string labelName;
+    regex fileRegex("([0-9][0-9][0-9])([0-9][0-9]).png");
+    regex templateFileRegex("([a-zA-Z]+).png");
+    
+    match_results<string::const_iterator> resultFile;
+    match_results<string::const_iterator> resultTemplateFile;
+    
+    // Retrieve scripter and page number
+    if(!regex_match(filename, resultFile, fileRegex))
+        cout << "Invalid filename" << endl;
+    
+    string scripter = resultFile[1];
+    string page = resultFile[2];
+    
+    // Retrieve each pictogram coordinate
+    vector<vector<int>> grid = this->generateGrid(squarePoints, 10);
+    
+    // Extract pictograms
+    int cpt = 0;
+    
+    // Begin extraction
+    for(int i=0; i < grid[0].size(); i++) {
         
-        match_results<string::const_iterator> resultFile;
-        match_results<string::const_iterator> resultTemplateFile;
+        // Identify line printed pictogram
+        Rect printed_roi = Rect(0, grid[0][i], PICTOGRAM_SIDE, PICTOGRAM_SIDE);
+        Mat current_picto_mat = this->printed_picto_area(printed_roi);
         
-        // Retrieve scripter and page number
-        if(!regex_match(filename, resultFile, fileRegex))
-            cout << "Invalid filename" << endl;
+        labelName = identifier.identifyPrintedPicto(current_picto_mat);
         
-        string scripter = resultFile[1];
-        string page = resultFile[2];
+        regex_match(labelName, resultTemplateFile, templateFileRegex);
+        string parsedLabelName = resultTemplateFile[1];
         
-        // Retrieve each pictogram coordinate
-        vector<vector<int>> grid = this->generateGrid(squarePoints, 10);
+        // If label unidentified, go to next row
+        if(parsedLabelName == "")
+            continue;
         
-        // Extract pictograms
-        int cpt = 0;
-        
-        // For each row
-        for(int i=0; i < grid[0].size(); i++) {
+        for(int j=0; j < grid[1].size(); j++) {
             
-            // Identify line printed pictogram
-            Rect printed_roi = Rect(0, grid[0][i], PICTOGRAM_SIDE, PICTOGRAM_SIDE);
-            Mat current_picto_mat = this->printed_picto_area(printed_roi);
+            // Make output name
+            string outputName = this->output_folder + parsedLabelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
             
-            labelName = identifier.identifyPrintedPicto(current_picto_mat);
+            Mat img_roi;
+            Rect region_of_interest = Rect(grid[1][j] + 10, grid[0][i] + 10, PICTOGRAM_SIDE - 20, PICTOGRAM_SIDE - 20);
             
-            // Retrieve scripter and page number
-            if(!regex_match(labelName, resultTemplateFile, templateFileRegex))
-                cout << "Invalid template name" << endl;
-            
-            string parsedLabelName = resultTemplateFile[1];
-            
-            // For each column
-            for(int j=0; j < grid[1].size(); j++) {
-                
-                string outputName = this->output_folder + parsedLabelName + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
-                
-                // Get pictogram region
-                Rect region_of_interest = Rect(grid[1][j] + 10, grid[0][i] + 10, PICTOGRAM_SIDE - 20, PICTOGRAM_SIDE - 20);
-                Mat img_roi = this->drawn_picto_area(region_of_interest);
-                
-                // Write pictogram image to disk
-                string output = outputName  + ".png";
-                imwrite(output, img_roi);
-                
-                // Write description file to disk
-                ofstream descriptionFile;
-                descriptionFile.open(outputName + ".txt");
-                descriptionFile << "# Team members: Berthier, Géraud, Le Goff\n";
-                descriptionFile << "label " << parsedLabelName << "\n";
-                descriptionFile << "form " << scripter << page << "\n";
-                descriptionFile << "scripter " << scripter << "\n";
-                descriptionFile << "page " << page << "\n";
-                descriptionFile << "row " << i << "\n";
-                descriptionFile << "column " << j << "\n";
-                descriptionFile.close();
-                
-                cpt++;
+            // Try to get pictogram region
+            try{
+                img_roi = this->drawn_picto_area(region_of_interest);
             }
+            catch(exception &e){
+                cout << "Problem handling file : " << filename << endl;
+                return false;
+            }
+            
+            // Write pictogram image to disk
+            string output = outputName  + ".png";
+            imwrite(output, img_roi);
+            
+            // Write description file to disk
+            utils::writeDescriptionFile(outputName, parsedLabelName, scripter, page , i, j);
+            
+            cpt++;
         }
-        
-        this->success_cpt++;
     }
+    cout << "Extracted " << cpt << " pictograms" << endl;
+    return true;
 }
 
 /**
  * \brief   Extracts all the pictograms from sheets contained in input folder
  */
-void Extractor::extractFromInputFolder(){
-    DIR* dir = utils::openDir(this->input_folder);
+void Extractor::extractFromInputFolder() {
     
+    DIR* dir = utils::openDir(this->input_folder);
     struct dirent* readFile = NULL;
 
-    while ((readFile = readdir(dir)) != NULL){
+    while ((readFile = readdir(dir)) != NULL) {
+        
         if(!regex_match(readFile->d_name, utils::hiddenFileRegex)) {
             cout << "### Handling file : " << readFile->d_name << endl;
-            this->extractFromFile(readFile->d_name);
+            if(this->extractFromFile(readFile->d_name))
+                this->success_cpt++;
         }
     }
     
     utils::closeDir(dir);
     
-    cout << "Sheet correctly extracted : " << this->success_cpt << "" << endl;
+    cout << "Sheets correctly extracted : " << this->success_cpt << endl;
 }

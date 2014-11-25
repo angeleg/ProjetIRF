@@ -26,7 +26,7 @@ public:
     Extractor(string input_f, string output_f, string template_f);
     vector<Point>  findSquares(string filename);
     vector<vector<int>> generateGrid(vector<Point> found_squares, int precision);
-    void extractFromFile(string filename);
+    bool extractFromFile(string filename);
     void extractFromInputFolder();
 };
 

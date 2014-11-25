@@ -5,14 +5,17 @@ PictogramIdentifier::PictogramIdentifier(string template_f){
     this->templates_index = utils::getFilenamesFromFolder(template_f);
 }
 
+/**
+ * \brief Identify the given printed pictogram
+ * \param img A matrix containing a single printed pictogram
+ * \return The name of the recognized pictogram
+ */
 string PictogramIdentifier::identifyPrintedPicto(Mat img){
-    Mat img_display;
     Mat result;
-    img.copyTo( img_display );
     
     int best_value = 0;
     int best_template_match = 0;
-
+        
     Mat templ;
     for(int i=0; i < this->templates_index.size(); i++){
         // Load current template
@@ -24,7 +27,8 @@ string PictogramIdentifier::identifyPrintedPicto(Mat img){
         result.create( result_cols, result_rows, CV_32FC1 );
         
         // Do the Matching and Normalize
-        matchTemplate( img_display, templ, result, CV_TM_CCOEFF );
+        matchTemplate( img, templ, result, CV_TM_CCOEFF );
+        
         
         double minVal, maxVal;
         Point minLoc, maxLoc;
@@ -39,7 +43,8 @@ string PictogramIdentifier::identifyPrintedPicto(Mat img){
             best_value = maxVal;
             best_template_match = i;
         }
-
+        
     }
+    
     return this->templates_index[best_template_match];
 }

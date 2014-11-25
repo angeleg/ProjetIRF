@@ -28,7 +28,6 @@ namespace utils {
      * \param   dir The directory to close
      */
     void closeDir(DIR* dir) {
-        // If we had a problem closing the folder, say it
         if (closedir(dir) == -1)
             cout << "Unable to close directory" << endl;
     }
@@ -38,7 +37,7 @@ namespace utils {
      * \param   path    The complete path of the folder
      *  \return A vector containing the names of the files
      */
-    vector<string> getFilenamesFromFolder(string path){
+    vector<string> getFilenamesFromFolder(string path) {
         // Init result
         vector<string> res;
         
@@ -54,5 +53,29 @@ namespace utils {
         closeDir(dir);
         
         return res;
+    }
+    
+    /**
+     * \brief   Writes extracted pictogram description file on disk
+     * \param   output_name The name of the file to write
+     * \param   label       The label recognized by the program
+     * \param   scripter    The scripter from the sheet
+     * \param   page        The page number
+     * \param   i           The row number in the sheet
+     * \param   j           The column number in the sheet
+     */
+    void writeDescriptionFile(string output_name, string label, string scripter, string page , int i, int j) {
+        ofstream descriptionFile;
+        
+        descriptionFile.open(output_name + ".txt");
+        descriptionFile << "# Team members: Berthier, Géraud, Le Goff\n";
+        descriptionFile << "label " << label << "\n";
+        descriptionFile << "form " << scripter << page << "\n";
+        descriptionFile << "scripter " << scripter << "\n";
+        descriptionFile << "page " << page << "\n";
+        descriptionFile << "row " << i << "\n";
+        descriptionFile << "column " << j << "\n";
+        
+        descriptionFile.close();
     }
 }
