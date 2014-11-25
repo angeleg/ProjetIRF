@@ -120,8 +120,18 @@ vector<vector<int>> Extractor::generateGrid(vector<Point> found_squares, int pre
                 break;
             }
         }
-        int average = (int)sum/cpt;
-        res[0].push_back(average);
+        
+        if(cpt > 0){
+            int average = (int)sum/cpt;
+            res[0].push_back(average);
+        }
+        else{
+            // We consider the value invalid
+            vector<vector<int>> foo;
+            foo.push_back(*new vector<int>());
+            foo.push_back(*new vector<int>());
+            return foo;
+        }
     }
     
     // Iterate for each column
