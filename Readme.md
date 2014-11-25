@@ -1,43 +1,48 @@
 #Projet IRF
 
-## HYPOTHESES
+##TEAM
+* Berthier Guillaume (SRC)
+* Géraud Angèle (INFO)
+* Le Goff Baptiste (INFO)
 
-    1. The drawn pictograms matrix has to be contained int the region starting at the point (500,700) and having a width of 1900 px and a height of 2500 px
-    2. The printed pictograms matrix has to be contained int the region starting at the point (200,700) and having a width of 260 px and a height of 2500 px
+##HYPOTHESES
+
+1. The drawn pictograms matrix has to be contained int the region starting at the point (500,700) and having a width of 1900 px and a height of 2500 px
+2. The printed pictograms matrix has to be contained int the region starting at the point (200,700) and having a width of 260 px and a height of 2500 px
 
 
 ##METHOD USED
 
 ###Drawn Pictograms extraction
 
-    1. Isolate the drawn pictograms section
-    2. Try to automaticaly detect the squared shapes in the image
-    3. If not enough squares have been found, ignore the current image
-    4. Compute average position of each row/column
-    5. Extract from the calculated position obtained in previous step
+1. Isolate the drawn pictograms section
+2. Try to automaticaly detect the squared shapes in the image
+3. If not enough squares have been found, ignore the current image
+4. Compute average position of each row/column
+5. Extract from the calculated position obtained in previous step
 
 ###Printed pictograms recognition
 
-    1. Isolate the printed pictograms section
-    2. For each line found in step 4 of pictograms extraction, isolate the printed pictogram
-    3. Compare the printed pictogram from previous step with template ones, and return the best match found
+1. Isolate the printed pictograms section
+2. For each line found in step 4 of pictograms extraction, isolate the printed pictogram
+3. Compare the printed pictogram from previous step with template ones, and return the best match found
 
 ##PERFORMANCE RESULTS
 
 ###Success Rate
 
-    - 650 files succesfully parsed (included trap files that are ignored)
-    - 156 files generating errors
-    - **Success rate on parsing files : 80,65%**
+* 650 files succesfully parsed (included trap files that are ignored)
+* 156 files generating errors
+* __Success rate on parsing files : 80,65%__
 
-    - 21476 pictograms extracted in total
-    - 3110 pictograms extracted without matching any label
-    - **Success rate on matching label : 85,52%**
+* 21476 pictograms extracted in total
+* 3110 pictograms extracted without matching any label
+* __Success rate on matching label : 85,52%__
 
 ###What can be done
     
-    1. Dynamically detect the drawn and printed pictograms areas instead of setting a static zone
-    2. Handle the case when the sheet is crooked
+1. Dynamically detect the drawn and printed pictograms areas instead of setting a static zone
+2. Handle the case when the sheet is crooked
     
 
 ###Files generating errors 
