@@ -49,9 +49,6 @@ vector<Point> Extractor::findSquares(string filename) {
     
     this->printed_picto_area = printed_pictograms_mat;
     
-    imshow("", pictograms_mat);
-    waitKey();
-    
     // Convert to grayscale
     Mat gray;
     cvtColor(pictograms_mat, gray, CV_BGR2GRAY);
@@ -251,6 +248,7 @@ void Extractor::extractFromInputFolder(){
         if(cpt > 1){
             cout << "Handling file : " << fichierLu->d_name << endl;
             this->extractFromFile(fichierLu->d_name);
+            this->success_cpt++;
         }
         cpt++;
     }
