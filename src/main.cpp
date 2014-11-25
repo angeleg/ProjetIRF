@@ -1,6 +1,7 @@
 #include <iostream>
 #include "extractor.h"
 #include "pictogram_identifier.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -10,6 +11,6 @@ int main (int argc, const char * argv[]) {
     
     Extractor extractor = *new Extractor(root_f + "test_input/", root_f + "output/", root_f + "template_pictograms/");
     //extractor.extractFromFile("00001.png");
-    
+
     extractor.extractFromInputFolder();
 }

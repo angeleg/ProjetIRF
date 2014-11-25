@@ -234,26 +234,22 @@ void Extractor::extractFromFile(string filename) {
     }
 }
 
+/**
+ * \brief   Extracts all the pictograms from sheets contained in input folder
+ */
 void Extractor::extractFromInputFolder(){
-    DIR* rep = NULL;
-    struct dirent* fichierLu = NULL;
-    rep = opendir(this->input_folder.c_str());
+    DIR* dir = utils::openDir(this->input_folder);
     
-    if (rep == NULL)
-        cout << "Unable to open template directory" << endl;
-    
-    int cpt =0;
+    struct dirent* readFile = NULL;
 
-    while ((fichierLu = readdir(rep)) != NULL){
-        if(cpt > 1){
-            cout << "Handling file : " << fichierLu->d_name << endl;
-            this->extractFromFile(fichierLu->d_name);
-            this->success_cpt++;
+    while ((readFile = readdir(dir)) != NULL){
+        if(!regex_match(readFile->d_name, utils::hiddenFileRegex)) {
+            cout << "### Handling file : " << readFile->d_name << endl;
+            this->extractFromFile(readFile->d_name);
         }
-        cpt++;
     }
     
-    if (closedir(rep) == -1)
-        cout << "There was a problem closing the template directory" << endl;
+    utils::closeDir(dir);
+    
     cout << "Sheet correctly extracted : " << this->success_cpt << "" << endl;
 }

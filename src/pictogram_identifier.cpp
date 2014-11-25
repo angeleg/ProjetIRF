@@ -2,28 +2,7 @@
 
 PictogramIdentifier::PictogramIdentifier(string template_f){
     this->template_folder = template_f;
-    
-    // Load template images
-    DIR* rep = NULL;
-    struct dirent* fichierLu = NULL;
-    rep = opendir(template_f.c_str());
-    
-    if (rep == NULL)
-        cout << "Unable to open template directory" << endl;
-    
-    int cpt =0;
-    Mat current_template;
-    while ((fichierLu = readdir(rep)) != NULL){
-        if(cpt > 2){
-            current_template = imread(fichierLu->d_name);
-            this->templates_index.push_back(fichierLu->d_name);
-        }
-        cpt++;
-    }
-    
-    if (closedir(rep) == -1)
-        cout << "There was a problem closing the template directory" << endl;
-
+    this->templates_index = utils::getFilenamesFromFolder(template_f);
 }
 
 string PictogramIdentifier::identifyPrintedPicto(Mat img){

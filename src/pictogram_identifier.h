@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <fstream>
-#include <dirent.h>
+#include "utils.h"
 
 using namespace std;
 using namespace cv;
