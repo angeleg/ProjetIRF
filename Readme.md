@@ -35,6 +35,7 @@
 * 156 files generating errors
 * __Success rate on parsing files : 80,65%__
 
+---
 
 * 21476 pictograms extracted in total
 * 3110 pictograms extracted without matching any label
