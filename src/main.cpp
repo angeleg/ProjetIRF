@@ -9,8 +9,9 @@ string root_f = "/Users/baptiste/Documents/INSA/irf/";
 
 int main (int argc, const char * argv[]) {
     
-    Extractor extractor = *new Extractor(root_f + "test_input/", root_f + "output/", root_f + "template_pictograms/");
-    //extractor.extractFromFile("00316.png");
-
-    extractor.extractFromInputFolder();
+    Extractor extractor = *new Extractor(root_f + "input_db/", root_f + "output/", root_f + "template_pictograms/");
+    extractor.extractFromFile("00000.png");
+    //extractor.extractFromInputFolder();
 }
+
+// Last succes_cpt : 771

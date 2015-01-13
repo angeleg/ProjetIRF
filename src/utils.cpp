@@ -37,7 +37,7 @@ namespace utils {
      * \param   path    The complete path of the folder
      *  \return A vector containing the names of the files
      */
-    vector<string> getFilenamesFromFolder(string path) {
+    vector<string> getFilenamesFromFolder(string path, string unwanted) {
         // Init result
         vector<string> res;
         
@@ -46,7 +46,7 @@ namespace utils {
         
         // Parsing filenames
         while ((readFile = readdir(dir)) != NULL){
-            if(!regex_match(readFile->d_name, hiddenFileRegex))
+            if(!regex_match(readFile->d_name, hiddenFileRegex) && (readFile->d_name != unwanted) )
                 res.push_back(readFile->d_name);
         }
         

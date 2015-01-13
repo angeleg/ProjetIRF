@@ -13,21 +13,25 @@ using namespace cv;
 
 class Extractor{
 private:
-    Mat drawn_picto_area;
-    Mat printed_picto_area;
     string input_folder;
     string output_folder;
     string template_folder;
     string current_file;
-    int number_of_squares_found;
     int success_cpt;
+    Mat cross_template;
     
 public:
     Extractor(string input_f, string output_f, string template_f);
+    
+    // Extraction
     vector<Point>  findSquares(string filename);
     vector<vector<int>> generateGrid(vector<Point> found_squares, int precision);
-    bool extractFromFile(string filename);
+    void extractFromFile(string filename);
     void extractFromInputFolder();
+    
+    // Normalization
+    vector<Point> findCrossCoordinates(Mat input_sheet);
+    Mat normalize(Mat input_sheet);
 };
 
 #endif

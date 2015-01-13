@@ -15,9 +15,7 @@ namespace utils {
     
     DIR* openDir(string path);
     void closeDir(DIR* dir);
-    
-    vector<string> getFilenamesFromFolder(string path);
-    
+    vector<string> getFilenamesFromFolder(string path, string unwanted);
     void writeDescriptionFile(string output_name, string label, string scripter, string page , int i, int j);
 }
 
