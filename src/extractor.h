@@ -22,6 +22,7 @@ private:
     
 public:
     Extractor(string input_f, string output_f, string template_f);
+    //~Extractor()
     
     // Extraction
     vector<Point>  findSquares(string filename);

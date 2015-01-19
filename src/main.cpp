@@ -13,7 +13,7 @@ int main (int argc, const char * argv[]) {
     //extractor.extractFromInputFolder();
     
     FeatureManager fm = FeatureManager(root_f + "output/", root_f + "arff_out/");
-    Mat im = imread(root_f + "output/car_000_00_2_1.png", CV_LOAD_IMAGE_GRAYSCALE);
+    Mat im = imread(root_f + "output/casualty_000_00_3_0.png", CV_LOAD_IMAGE_GRAYSCALE);
     fm.computeDrawingBorders(im);
     
     exit(0);

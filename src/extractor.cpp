@@ -12,8 +12,8 @@ const Rect drawn_pictogram_cropping(10,16,16,16);
 
 /**
  * \brief   Extractor constructor
- * \param   input_f The input folder where we retrieve the usersheets
- * \param   output_f The output folder where we put the pictograms exctracted
+ * \param   input_f     The input folder where we retrieve the usersheets
+ * \param   output_f    The output folder where we put the pictograms exctracted
  */
 Extractor::Extractor(string input_f, string output_f, string template_f){
     this->input_folder = input_f;
@@ -28,7 +28,7 @@ Extractor::Extractor(string input_f, string output_f, string template_f){
 
 /**
  * \brief   Extracts the pictograms of a given usersheet
- * \param   filename The name of the file containing the usersheet
+ * \param   filename    The name of the file containing the usersheet
  */
 void Extractor::extractFromFile(string filename) {
     

@@ -6,9 +6,9 @@ PictogramIdentifier::PictogramIdentifier(string template_f){
 }
 
 /**
- * \brief Identify the given printed pictogram
- * \param img A matrix containing a single printed pictogram
- * \return The name of the recognized pictogram
+ * \brief   Identify the given printed pictogram
+ * \param   img     A matrix containing a single printed pictogram
+ * \return  The name of the recognized pictogram
  */
 string PictogramIdentifier::identifyPrintedPicto(Mat img){
     Mat result;

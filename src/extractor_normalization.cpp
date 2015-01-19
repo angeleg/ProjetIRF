@@ -9,7 +9,7 @@ const double nm_cross_angle = 54.801136731;
 
 /**
  * \brief   Find the coordinates of the two cross on the sheet
- * \param   input_sheet The matrix containing the image
+ * \param   input_sheet     The matrix containing the image
  * \return  A vector of two points
  */
 vector<Point> Extractor::findCrossCoordinates(Mat input_sheet) {
@@ -53,7 +53,7 @@ vector<Point> Extractor::findCrossCoordinates(Mat input_sheet) {
 
 /**
  * \brief   Normalizes the sheet in size and rotation
- * \param   input_sheet The raw sheet to normalize
+ * \param   input_sheet     The raw sheet to normalize
  * \return  The normalized sheet
  */
 Mat Extractor::normalize(Mat input_sheet) {
