@@ -21,9 +21,14 @@ public:
     
     // Manager
     void writeArff(string file_path);
+    Mat normalize(Mat img, Rect cropping);
     
     // Metrics
     Rect computeDrawingBorders(Mat grayscaled_pictogram);
+    
+    // Staticstics
+    double getBlackPercentage(Mat img);
+    Point getGravityCenter(Mat img);
     
 };
 
