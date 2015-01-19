@@ -34,8 +34,8 @@ namespace utils {
     
     /**
      * \brief   Retrieve the names of files contained in a specific folder
-     * \param   path    The complete path of the folder
-     *  \return A vector containing the names of the files
+     * \param   path The complete path of the folder
+     * \return  A vector containing the names of the files
      */
     vector<string> getFilenamesFromFolder(string path, string unwanted) {
         // Init result

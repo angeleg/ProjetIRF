@@ -8,7 +8,7 @@ const int printed_pictogram_padding_y = 348;
 
 const Rect first_drawn_pictogram_zone(610,248,250,250);
 const Point drawn_pictogram_padding(348,348);
-const Rect drawn_pictogram_cropping(10,16,16,28);
+const Rect drawn_pictogram_cropping(10,16,16,16);
 
 /**
  * \brief   Extractor constructor
@@ -28,7 +28,7 @@ Extractor::Extractor(string input_f, string output_f, string template_f){
 
 /**
  * \brief   Extracts the pictograms of a given usersheet
- * \param   filename    The name of the file containing the usersheet
+ * \param   filename The name of the file containing the usersheet
  */
 void Extractor::extractFromFile(string filename) {
     
@@ -74,15 +74,17 @@ void Extractor::extractFromFile(string filename) {
             
             current_drawn_pictogram_zone.x = first_drawn_pictogram_zone.x + j*drawn_pictogram_padding.x;
             
+            Rect current_drawn_pictogram_zone_cropped = current_drawn_pictogram_zone;
+            
             // Crop
-            /*current_drawn_pictogram_zone.x += drawn_pictogram_cropping.x;
-            current_drawn_pictogram_zone.y += drawn_pictogram_cropping.y;
-            current_drawn_pictogram_zone.width -= drawn_pictogram_cropping.width;
-            current_drawn_pictogram_zone.height -= drawn_pictogram_cropping.height;*/
+            current_drawn_pictogram_zone_cropped.x += drawn_pictogram_cropping.x;
+            current_drawn_pictogram_zone_cropped.y += drawn_pictogram_cropping.y;
+            current_drawn_pictogram_zone_cropped.width -= drawn_pictogram_cropping.width;
+            current_drawn_pictogram_zone_cropped.height -= drawn_pictogram_cropping.height;
             
             // Write output files
             string outputName = this->output_folder + label_name + "_" + scripter + "_" + page + "_" + to_string(i) + "_" + to_string(j);
-            imwrite(outputName + ".png", normalized_sheet(current_drawn_pictogram_zone));
+            imwrite(outputName + ".png", normalized_sheet(current_drawn_pictogram_zone_cropped));
             utils::writeDescriptionFile(outputName, label_name, scripter, page , i, j);
 
         }
