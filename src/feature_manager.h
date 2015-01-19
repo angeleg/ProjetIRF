@@ -1,10 +1,14 @@
 #ifndef __irf_project__feature_manager__
 #define __irf_project__feature_manager__
 
-#include <stdio.h>
 #include <opencv2/opencv.hpp>
+#include <fstream>
+#include <iostream>
+#include <regex>
+#include "utils.h"
 
 using namespace cv;
+using namespace std;
 
 class FeatureManager {
 private:
@@ -15,7 +19,9 @@ public:
     FeatureManager(string db_f, string arff_f);
     //~FeatureManager();
     
-    Rect computeDrawingBorders(Mat pictogram);
+    Rect computeDrawingBorders(Mat grayscaled_pictogram);
+    
+    void writeArff(string file_path);
     
 };
 
