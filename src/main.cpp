@@ -1,6 +1,6 @@
 #include <iostream>
 #include "extractor.h"
-#include "feature_manager.h"
+#include "feature.h"
 
 using namespace std;
 

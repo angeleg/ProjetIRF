@@ -19,9 +19,11 @@ public:
     FeatureManager(string db_f, string arff_f);
     //~FeatureManager();
     
-    Rect computeDrawingBorders(Mat grayscaled_pictogram);
-    
+    // Manager
     void writeArff(string file_path);
+    
+    // Metrics
+    Rect computeDrawingBorders(Mat grayscaled_pictogram);
     
 };
 
