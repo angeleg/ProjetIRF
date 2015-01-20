@@ -13,12 +13,16 @@ int main (int argc, const char * argv[]) {
     //extractor.extractFromFile("00001.png");
     
     FeatureManager fm = FeatureManager(root_f + "output/", root_f + "arff_out/");
-    //Mat im = imread(root_f + "output/accident_000_00_0_0.png", CV_LOAD_IMAGE_GRAYSCALE);
-    //fm.computeDrawingBorders(im);
     fm.writeArff("features.arff");
+    
+    /*Mat img = imread(root_f + "electricity_004_20_4_0.png", CV_LOAD_IMAGE_GRAYSCALE);
+    Rect r = fm.computeDrawingBorders(img);
+    cout << "x : " << r.x << ", y : " << r.y << ", width : " << r.width << ", height : " << r.height << endl;
+    imshow("", img(r));
+    waitKey();*/
     
     exit(0);
 }
 
-// Last succes_cpt : 771
-// TODO : finish to write Readme.md
+// Last succes_cpt : 771 / 806(including pages 22)
+// 26 950 images of pictograms extracted (100%)

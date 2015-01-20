@@ -77,10 +77,18 @@ void FeatureManager::writeArff(string output_file) {
         // Skip .txt files
         if(extension.compare("txt") == 0)
            continue;
+        
+        cout << "Starting processing file : " << filename << endl;
 
         // Begin metrics feature extraction
         Mat pictogram = imread(this->db_folder + filename, CV_LOAD_IMAGE_GRAYSCALE);
         Rect boundaries = computeDrawingBorders(pictogram);
+        
+        // Skip blank pictograms
+        if(boundaries.width <= 0 || boundaries.height <= 0) {
+            cout << "%%%%% Ignored file because of blank pictogram : " << filename << "%%%%%" << endl;
+            continue;
+        }
         
         // attribute : surface
         arff_file << boundaries.width*boundaries.height << ",";

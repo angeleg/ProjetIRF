@@ -82,7 +82,7 @@ Rect FeatureManager::computeDrawingBorders(Mat grayscaled_pictogram) {
     int rightBorder = findFirstPixel(grayscaled_pictogram, false, false);
     int bottomBorder = findFirstPixel(grayscaled_pictogram, false, true);
     
-    std::cout << leftBorder << ", " << topBorder << ", " << rightBorder << ", " << bottomBorder << std::endl;
+    //std::cout << leftBorder << ", " << topBorder << ", " << rightBorder << ", " << bottomBorder << std::endl;
     Rect roi = Rect(leftBorder, topBorder, rightBorder - leftBorder, bottomBorder - topBorder);
     
     //imshow("", grayscaled_pictogram(roi));

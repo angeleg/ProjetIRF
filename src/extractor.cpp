@@ -51,8 +51,8 @@ void Extractor::extractFromFile(string filename) {
     string scripter = resultFile[1];
     string page = resultFile[2];
     
-    // Ignore the page 22 of each scripter because it's not a valid input file
-    if (page.compare("22") == 0)
+    // Ignore the page 22 or 23 of each scripter because it's not a valid input file
+    if ( (page.compare("22") == 0) || (page.compare("23") == 0) )
         return;
     
     Rect current_printed_pictogram_zone = first_printed_pictogram_zone;
