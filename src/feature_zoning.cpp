@@ -1,7 +1,7 @@
 #include "feature.h"
 
-const int ZONES_COLS = 3;
 const int ZONES_ROWS = 4;
+const int ZONES_COLS = 4;
 
 /**
  * \brief   Computes the gravity center by zone
