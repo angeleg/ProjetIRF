@@ -54,6 +54,7 @@ void FeatureManager::writeArff(string output_file) {
     arff_file << "@ATTRIBUTE ratio NUMERIC\n";
     arff_file << "@ATTRIBUTE diagonalAngle NUMERIC\n";
     this->printZonesGravityCenterAttributes(arff_file);
+    this->printZonesBlackPercentageAttributes(arff_file);
     
     arff_file << "@ATTRIBUTE blackPercentage NUMERIC\n";
     arff_file << "@ATTRIBUTE gravityCenterX NUMERIC\n";
@@ -106,11 +107,17 @@ void FeatureManager::writeArff(string output_file) {
         
         vector<Point> gravityCenters = this->getZonesGravityCenters(cropped_pictogram);
         
-        // @ATTRIBUTES ZONE_i_j_GRAVITY_CENTER_X/Y NUMERIC
+        // @ATTRIBUTES zone_i_j_gravity_center_x/y
         for(int i=0; i < gravityCenters.size(); i++) {
             arff_file << gravityCenters[i].x << "," << gravityCenters[i].y << ",";
         }
         
+        vector<double> blackPercentages = this->getZonesBlackPercentage(cropped_pictogram);
+        
+        // @ATTRIBUTES zone_i_j_black_percentage
+        for(int i=0; i < blackPercentages.size(); i++) {
+            arff_file << blackPercentages[i] << ",";
+        }
         
         // %%%%% NORMALIZATION %%%%%
         Mat normalized_pictogram = this->normalize(pictogram, boundaries);

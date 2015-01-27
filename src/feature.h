@@ -32,7 +32,9 @@ public:
     
     // Zoning
     vector<Point> getZonesGravityCenters(Mat img);
+    vector<double> getZonesBlackPercentage(Mat img);
     void printZonesGravityCenterAttributes(ofstream &f);
+    void printZonesBlackPercentageAttributes(ofstream &f);
     
     
 };
