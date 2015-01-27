@@ -30,6 +30,11 @@ public:
     double getBlackPercentage(Mat img);
     Point getGravityCenter(Mat img);
     
+    // Zoning
+    vector<Point> getZonesGravityCenters(Mat img);
+    void printZonesGravityCenterAttributes(ofstream &f);
+    
+    
 };
 
 #endif

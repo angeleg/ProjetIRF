@@ -53,9 +53,12 @@ void FeatureManager::writeArff(string output_file) {
     arff_file << "@ATTRIBUTE surface NUMERIC\n";
     arff_file << "@ATTRIBUTE ratio NUMERIC\n";
     arff_file << "@ATTRIBUTE diagonalAngle NUMERIC\n";
+    this->printZonesGravityCenterAttributes(arff_file);
+    
     arff_file << "@ATTRIBUTE blackPercentage NUMERIC\n";
     arff_file << "@ATTRIBUTE gravityCenterX NUMERIC\n";
     arff_file << "@ATTRIBUTE gravityCenterY NUMERIC\n";
+    
     arff_file << "@ATTRIBUTE class {accident,bomb,car,casualty,electricity,fire,firebrigade,flood,gas,injury,paramedics,person,police,roadblock}\n";
     
     // Data
@@ -90,29 +93,40 @@ void FeatureManager::writeArff(string output_file) {
             continue;
         }
         
-        // attribute : surface
+        Mat cropped_pictogram = pictogram(boundaries);
+        
+        // @ATTRIBUTE surface
         arff_file << boundaries.width*boundaries.height << ",";
         
-        // attribute : ratio
+        // @ATTRIBUTE ratio
         arff_file << ((double)boundaries.height) / boundaries.width << ",";
         
-        // attribute : angle between diagonal and horizontal
+        // @ATTRIBUTE diagonalAngle
         arff_file << atan(((double)boundaries.width) / boundaries.height) << ",";
         
-        Mat normalized = this->normalize(pictogram, boundaries);
+        vector<Point> gravityCenters = this->getZonesGravityCenters(cropped_pictogram);
         
-        // attribute : black percentage
-        arff_file << this->getBlackPercentage(normalized) << ",";
+        // @ATTRIBUTES ZONE_i_j_GRAVITY_CENTER_X/Y NUMERIC
+        for(int i=0; i < gravityCenters.size(); i++) {
+            arff_file << gravityCenters[i].x << "," << gravityCenters[i].y << ",";
+        }
         
-        Point gravity_center = getGravityCenter(normalized);
         
-        // attribute : gravity center x
+        // %%%%% NORMALIZATION %%%%%
+        Mat normalized_pictogram = this->normalize(pictogram, boundaries);
+        
+        // @ATTRIBUTE blackPercentage
+        arff_file << this->getBlackPercentage(normalized_pictogram) << ",";
+        
+        Point gravity_center = getGravityCenter(normalized_pictogram);
+        
+        // @ATTRIBUTE gravityCenterX
         arff_file << gravity_center.x << ",";
         
-        // attribute : gravity center y
+        // @ATTRIBUTE gravityCenterY
         arff_file << gravity_center.y << ",";
         
-        // attribute : class
+        // @ATTRIBUTE class
         arff_file << label << "\n";
     }
     

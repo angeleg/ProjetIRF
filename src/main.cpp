@@ -15,6 +15,9 @@ int main (int argc, const char * argv[]) {
     FeatureManager fm = FeatureManager(root_f + "output/", root_f + "arff_out/");
     fm.writeArff("features.arff");
     
+    //Mat m = imread(root_f + "output/accident_000_00_0_0.png", CV_LOAD_IMAGE_GRAYSCALE);
+    //fm.getZonesGravityCenters(m);
+    
     /*Mat img = imread(root_f + "electricity_004_20_4_0.png", CV_LOAD_IMAGE_GRAYSCALE);
     Rect r = fm.computeDrawingBorders(img);
     cout << "x : " << r.x << ", y : " << r.y << ", width : " << r.width << ", height : " << r.height << endl;

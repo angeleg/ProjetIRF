@@ -1,13 +1,13 @@
 #include "feature.h"
 
+const uchar THRESHOLD = 200;
+
 /**
  * \brief   Get the proportion of black pixels in the image
  * \param   img     The image to analyze
  * \return  The percentage of black pixels
  */
 double FeatureManager::getBlackPercentage(Mat img) {
-    uchar THRESHOLD = 250;
-    
     int black_cpt = 0;
     
     for (int i=0; i < img.rows; i++) {
@@ -26,9 +26,7 @@ double FeatureManager::getBlackPercentage(Mat img) {
  * \param   img     The image to analyze
  * \return  The coordinates of the gravity center
  */
-Point FeatureManager::getGravityCenter(Mat img) {
-    uchar THRESHOLD = 250;
-    
+Point FeatureManager::getGravityCenter(Mat img) {  
     Point res;
     int black_cpt = 0;
     
