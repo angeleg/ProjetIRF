@@ -10,11 +10,17 @@ FeatureManager::FeatureManager(string db_f, string arff_f) {
     this->arff_folder = arff_f;
 }
 
+/**
+ * \brief   Normalizes the image to a certain size for further use in feature extraction
+ * \param   img         The image to normalize
+ * \param   cropping    The bounding rectangle defining the region of interest
+ * \return  The normalized image of size (250x250)
+ */
 Mat FeatureManager::normalize(Mat img, Rect cropping) {
     
     Mat img_crop = img(cropping);
-    
     int max_side;
+    
     if(img_crop.rows > img_crop.cols)
         max_side = img_crop.rows;
     else
@@ -138,5 +144,4 @@ void FeatureManager::writeArff(string output_file) {
     }
     
     arff_file.close();
-    
 }

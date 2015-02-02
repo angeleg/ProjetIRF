@@ -1,7 +1,7 @@
 #include "extractor.h"
 #include "feature.h"
 
-string root = "/Users/baptiste/Documents/INSA/irf/data";
+string root = "/Users/baptiste/Documents/INSA/irf/data/";
 string input_learning_db = "NicIcon";
 string learning_db_extracted = "NicIcon_extracted";
 string template_pictograms = "template_pictograms";
@@ -17,10 +17,8 @@ int main (int argc, const char * argv[]) {
                                        root + arff_out + "/");
     
     //extractor.extractFromInputFolder();
+    
     fm.writeArff("out.arff");
     
-    exit(0);
+    return 0;
 }
-
-// Last succes_cpt : 771 / 806(including pages 22)
-// 26 950 images of pictograms extracted (100%)

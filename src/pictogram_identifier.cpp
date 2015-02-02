@@ -1,5 +1,9 @@
 #include "pictogram_identifier.h"
 
+/**
+ * \brief   PictogramIdentifier constructor
+ * \param   template_f     The folder containing the template pictograms
+ */
 PictogramIdentifier::PictogramIdentifier(string template_f){
     this->template_folder = template_f;
     this->templates_index = utils::getFilenamesFromFolder(template_f, "sheet_cross.png");

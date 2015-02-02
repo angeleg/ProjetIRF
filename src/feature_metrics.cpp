@@ -9,9 +9,8 @@
  * \return  The number of the first row or column were we encountered a non white pixel
  */
 int findFirstPixel(Mat grayscaled_pictogram, bool parse_from_zero, bool parse_by_row) {
-    
+
     uchar THRESHOLD = 220;
-    
     int i;
     int j;
     int bigBound;
@@ -66,7 +65,6 @@ int findFirstPixel(Mat grayscaled_pictogram, bool parse_from_zero, bool parse_by
                 j--;
         }
     }
-    
     return i;
 }
 
@@ -82,11 +80,7 @@ Rect FeatureManager::computeDrawingBorders(Mat grayscaled_pictogram) {
     int rightBorder = findFirstPixel(grayscaled_pictogram, false, false);
     int bottomBorder = findFirstPixel(grayscaled_pictogram, false, true);
     
-    //std::cout << leftBorder << ", " << topBorder << ", " << rightBorder << ", " << bottomBorder << std::endl;
     Rect roi = Rect(leftBorder, topBorder, rightBorder - leftBorder, bottomBorder - topBorder);
-    
-    //imshow("", grayscaled_pictogram(roi));
-    //waitKey();
     
     return roi;
 }

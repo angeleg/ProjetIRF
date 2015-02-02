@@ -1,7 +1,7 @@
 #include "feature.h"
 
 const int ZONES_ROWS = 4;
-const int ZONES_COLS = 4;
+const int ZONES_COLS = 3;
 
 /**
  * \brief   Computes the gravity center by zone
@@ -31,7 +31,6 @@ vector<Point> FeatureManager::getZonesGravityCenters(Mat img) {
         else
             j++;
     }
-    
     return res;
 }
 
@@ -63,7 +62,6 @@ vector<double> FeatureManager::getZonesBlackPercentage(Mat img) {
         else
             j++;
     }
-    
     return res;
 }
 

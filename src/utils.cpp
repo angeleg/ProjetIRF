@@ -49,7 +49,6 @@ namespace utils {
             if(!regex_match(readFile->d_name, hiddenFileRegex) && (readFile->d_name != unwanted) )
                 res.push_back(readFile->d_name);
         }
-        
         closeDir(dir);
         
         return res;
